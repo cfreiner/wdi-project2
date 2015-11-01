@@ -2,7 +2,9 @@ extends layout.jade
 
 block content
   h1 Title
+    button(class='test') Test Button
   div(id='map')
-  script(src="/js/map.js")
-  script(async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBPvBQVpE9mqJRIcSaUljVl5zEigpurjaw&callback=initMap")
+  script(src='https://code.jquery.com/jquery-2.1.4.min.js')
+  script(src='/js/map.js')
+  script(async defer src='https://maps.googleapis.com/maps/api/js?key=AIzaSyBPvBQVpE9mqJRIcSaUljVl5zEigpurjaw&callback=initMap')
 
