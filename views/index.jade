@@ -1,0 +1,8 @@
+extends layout.jade
+
+block content
+  h1 Title
+  div(id='map')
+  script(src="/js/map.js")
+  script(async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBPvBQVpE9mqJRIcSaUljVl5zEigpurjaw&callback=initMap")
+
