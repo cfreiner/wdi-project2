@@ -17,6 +17,14 @@ function initMap() {
     zoom: 14
   });
   }
+  $.ajax({
+    url: window.location + 'stream/50/100',
+    method: 'GET'
+  }).done(function() {
+    console.log('ajax done');
+  }).fail(function() {
+    console.log('ajax fail');
+  });
 }
 
 var infoWindow;

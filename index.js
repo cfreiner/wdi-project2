@@ -23,6 +23,13 @@ app.route('/')
     res.render('index');
   });
 
+app.get('/stream/:lat/:lng', function(req, res) {
+  console.log(
+    req.params.lat,
+    req.params.lng
+  );
+});
+
 // //location bounds: SW first, NE second
 // var seattle = ['-122.354','47.6','-122.32','47.63'];
 
