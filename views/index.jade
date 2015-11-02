@@ -3,6 +3,10 @@ extends layout.jade
 block content
   h1 Title
     button(class='test') Test Button
+    form
+      label(for='location')
+      input(type='text' id='location' name='location');
+      button(id='btn-location') Go!
   div(id='map')
   script(src='https://code.jquery.com/jquery-2.1.4.min.js')
   script(type='text/javascript' src='/socket.io/socket.io.js')

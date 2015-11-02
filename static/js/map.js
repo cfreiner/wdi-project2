@@ -9,7 +9,7 @@ socket.on('connect', function() {
 
 socket.on('tweets', function(tweet) {
   createInfoWindowFromTweet(tweet);
-  console.log(tweet.place.place_type);
+  console.log(tweet.place.place_type, tweet.place.full_name);
 });
 
 //Get the relevent lat/lng bounds for the Twitter API
@@ -84,7 +84,7 @@ function createInfoWindowFromTweet(tweet) {
   }
 }
 
-var newYork = ['-74','40','-73','41'];
+var newYork = {coords: ['-74','40','-73','41']};
 
 $(function() {
   $('.test').click(function(e) {

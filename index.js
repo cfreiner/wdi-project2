@@ -61,8 +61,10 @@ io.on('connect', function(socket) {
   socket.on('location', function(newLocation) {
     console.log('In the location handler');
     //Initialize the Twitter stream based on user input
+    if(stream) {
+      stream.stop();
+    }
     stream = twitter.stream('statuses/filter', { locations: newLocation.coords });
-
     //Emit tweets from the Twitter stream
     stream.on('tweet', function(tweet) {
       console.log('Emitting tweet');
