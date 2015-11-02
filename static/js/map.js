@@ -1,4 +1,5 @@
 var map = null;
+var mapReady = false;
 var socket = io();
 var tweets = [];
 
@@ -7,7 +8,8 @@ socket.on('connect', function() {
 });
 
 socket.on('tweets', function(tweet) {
-  console.log(tweet.text);
+  createInfoWindowFromTweet(tweet);
+  console.log(tweet.place);
 });
 
 //Get the relevent lat/lng bounds for the Twitter API
@@ -34,6 +36,7 @@ function initMap() {
         zoom: 15
       });
       google.maps.event.addListenerOnce(map, 'idle', function(){
+        mapReady = true;
         var bounds = getTwitterBounds(map);
         $.ajax({
           url: window.location + 'stream',
@@ -69,6 +72,20 @@ function addTweet(tweet) {
   } else {
     tweets.shift();
     tweets.push(tweet);
+  }
+}
+
+function createInfoWindowFromTweet(tweet) {
+  if(mapReady && tweet.coordinates) {
+    console.log('creating info window');
+    var infoWindow = new google.maps.InfoWindow({
+      content: tweet.text,
+      position: {
+        lat: tweet.coordinates.coordinates[1],
+        lng: tweet.coordinates.coordinates[0]
+      }
+    });
+    infoWindow.open(map);
   }
 }
 

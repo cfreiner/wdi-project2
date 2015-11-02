@@ -30,12 +30,12 @@ app.get('/stream', function(req, res) {
     req.query.neLng,
     req.query.neLat
   );
-  switchStream(
-    req.query.swLng,
-    req.query.swLat,
-    req.query.neLng,
-    req.query.neLat
-  );
+  // switchStream(
+  //   req.query.swLng,
+  //   req.query.swLat,
+  //   req.query.neLng,
+  //   req.query.neLat
+  // );
   res.end();
 });
 
@@ -54,6 +54,11 @@ var stream = twitter.stream('statuses/filter', { locations: seattle });
 
 //Server-side socket.io to emit tweets
 io.on('connect', function(socket) {
+  // create client specific stream
+  // on stream tweet, send to socket
+
+  // listen for data from client
+  // change stream based on what client sends
   stream.on('tweet', function(tweet) {
     console.log('Emitting tweet');
     io.emit('tweets', tweet);
