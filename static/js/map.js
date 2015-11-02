@@ -2,6 +2,7 @@ var map = null;
 var mapReady = false;
 var socket = io();
 var tweets = [];
+var geocoder = new google.maps.Geocoder();
 
 socket.on('connect', function() {
   console.log('Socket.io connection successful');
@@ -13,10 +14,10 @@ socket.on('tweets', function(tweet) {
 });
 
 //Get the relevent lat/lng bounds for the Twitter API
-function getTwitterBounds(map) {
-  var bounds = map.getBounds();
-  var sw = bounds.getSouthWest();
-  var ne = bounds.getNorthEast();
+//Take a goodle maps LatLngBounds object literal
+function getTwitterBounds(googleBounds) {
+  var sw = googleBoundsgetSouthWest();
+  var ne = googleBounds.getNorthEast();
   return {
     coords: [
       sw.lng().toString(),
@@ -39,7 +40,7 @@ function initMap() {
       });
       google.maps.event.addListenerOnce(map, 'idle', function(){
         mapReady = true;
-        var bounds = getTwitterBounds(map);
+        var bounds = getTwitterBounds(map.getBounds());
         // $.ajax({
         //   url: window.location + 'stream',
         //   method: 'GET',
@@ -84,11 +85,28 @@ function createInfoWindowFromTweet(tweet) {
   }
 }
 
+//Pan the map to a new location
+function panToLocation(location) {
+  geocoder.geocode( { 'address': location}, function(results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      map.panToBounds(results[0].geometry.bounds);
+    } else {
+      alert("Google geocoding error: " + status);
+    }
+  });
+}
+
 var newYork = {coords: ['-74','40','-73','41']};
 
 $(function() {
   $('.test').click(function(e) {
     e.preventDefault();
     socket.emit('location', newYork);
+  });
+  $('#btn-location').click(function(e) {
+    e.preventDefault();
+    var location = $('#btn-location').val();
+    panToLocation(location);
+    socket.emit('location', getTwitterBounds(map.getBounds));
   });
 });
