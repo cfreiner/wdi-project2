@@ -18,10 +18,12 @@ function getTwitterBounds(map) {
   var sw = bounds.getSouthWest();
   var ne = bounds.getNorthEast();
   return {
-    swLat: sw.lat(),
-    swLng: sw.lng(),
-    neLat: ne.lat(),
-    neLng: ne.lng()
+    coords: [
+      sw.lng().toString(),
+      sw.lat().toString(),
+      ne.lng().toString(),
+      ne.lat().toString()
+    ]
   };
 }
 
@@ -38,13 +40,14 @@ function initMap() {
       google.maps.event.addListenerOnce(map, 'idle', function(){
         mapReady = true;
         var bounds = getTwitterBounds(map);
-        $.ajax({
-          url: window.location + 'stream',
-          method: 'GET',
-          data: bounds
-        }).fail(function() {
-          console.log('ajax failed');
-        });
+        // $.ajax({
+        //   url: window.location + 'stream',
+        //   method: 'GET',
+        //   data: bounds
+        // }).fail(function() {
+        //   console.log('ajax failed');
+        // });
+        socket.emit('location', bounds);
       });
 
     });
@@ -55,14 +58,6 @@ function initMap() {
     zoom: 14
   });
   }
-  // $.ajax({
-  //   url: window.location + 'stream/50/100',
-  //   method: 'GET'
-  // }).done(function() {
-  //   console.log('ajax done');
-  // }).fail(function() {
-  //   console.log('ajax fail');
-  // });
 }
 
 //Add a tweet to the array
@@ -89,23 +84,8 @@ function createInfoWindowFromTweet(tweet) {
   }
 }
 
-var infoWindow;
-
-setTimeout(function() {
-  infoWindow = new google.maps.InfoWindow({
-    content: 'This info window is a test.',
-    position: {
-      lat: 47.768248,
-      lng: -122.323113
-    }
-  });
-  console.log('timeout');
-}, 5000);
-
-
 $(function() {
   $('.test').click(function(e) {
     e.preventDefault();
-    infoWindow.open(map);
   });
 });

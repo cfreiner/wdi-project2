@@ -46,7 +46,7 @@ var switchStream = function(swLng, swLat, neLng, neLat) {
   stream = twitter.stream('statuses/filter', {locations: location});
 };
 
-//location bounds: SW first, NE second
+//location bounds: SW first, NE second, [lng, lat] format
 var seattle = ['-122.354','47.6','-122.32','47.63'];
 
 //Create stream
@@ -56,13 +56,20 @@ var stream = twitter.stream('statuses/filter', { locations: seattle });
 io.on('connect', function(socket) {
   // create client specific stream
   // on stream tweet, send to socket
+  var stream = null;
 
-  // listen for data from client
-  // change stream based on what client sends
-  stream.on('tweet', function(tweet) {
-    console.log('Emitting tweet');
-    io.emit('tweets', tweet);
+  socket.on('location', function(newLocation) {
+    console.log('In the location handler');
+    //Initialize the Twitter stream based on user input
+    stream = twitter.stream('statuses/filter', { locations: newLocation.coords });
+
+    //Emit tweets from the Twitter stream
+    stream.on('tweet', function(tweet) {
+      console.log('Emitting tweet');
+      socket.emit('tweets', tweet);
+    });
   });
+
 });
 
 server.listen(port, function() {
