@@ -2,6 +2,7 @@ var map = null;
 var geocoder = null;
 var mapReady = false;
 var socket = io();
+var infoWindows = [];
 
 socket.on('connect', function() {
   console.log('Socket.io connection successful');
@@ -89,9 +90,18 @@ function createInfoWindowFromTweet(tweet) {
           lng: lng
         }
       });
-      infoWindow.open(map);
+      addInfoWindow(infoWindow);
+      // infoWindow.open(map);
     }
   }
+}
+
+function addInfoWindow(infoWindow) {
+  if(infoWindows.length > 5) {
+    infoWindows.shift().close();
+  }
+  infoWindow.open(map);
+  infoWindows.push(infoWindow);
 }
 
 //Pan the map to a new location
