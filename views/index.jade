@@ -3,18 +3,20 @@ extends layout.jade
 block content
   h1 Title
     form(id='signup' method='POST' action='/signup')
-      label(for='signup-username') Username
-      input(type='text' id='signup-username' name='signup-username')
-      label(for='signup-email') Email
-      input(type='email' id='signup-email' name='signup-email')
-      label(for='signup-password') Password
-      input(type='text' id='signup-password' name='signup-password')
+      label(for='signup_username') Username
+      input(type='text' id='signup_username' name='signup_username')
+      label(for='signup_email') Email
+      input(type='email' id='signup_email' name='signup_email')
+      label(for='signup_password') Password
+      input(type='text' id='signup_password' name='signup_password')
+      label(for='signup_password2') Password
+      input(type='text' id='signup_password2' name='signup_password2')
       button Sign Up
     form(id='login' method='POST' action='/login')
-      label(for='login-email') Email
-      input(type='email' id='login-email' name='login-email')
-      label(for='login-password') Password
-      input(type='text' id='login-password' name='login-password')
+      label(for='login_email') Email
+      input(type='email' id='login_email' name='login_email')
+      label(for='login_password') Password
+      input(type='text' id='login_password' name='login_password')
       button Log in
     input(type='text' id='location' class='map-controls' name='location')
   div(id='map')
