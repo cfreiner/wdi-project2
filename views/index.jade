@@ -2,13 +2,24 @@ extends layout.jade
 
 block content
   h1 Title
-    button(class='test') Test Button
+    form(id='signup' method='POST' action='/signup')
+      label(for='signup-username') Username
+      input(type='text' id='signup-username' name='signup-username')
+      label(for='signup-email') Email
+      input(type='email' id='signup-email' name='signup-email')
+      label(for='signup-password') Password
+      input(type='text' id='signup-password' name='signup-password')
+    form(id='login' method='POST' action='/login')
+      label(for='login-email') Email
+      input(type='email' id='login-email' name='login-email')
+      label(for='login-password') Password
+      input(type='text' id='login-password' name='login-password')
     input(type='text' id='location' class='map-controls' name='location')
   div(id='map')
   script(src='https://code.jquery.com/jquery-2.1.4.min.js')
   script(type='text/javascript' src='/socket.io/socket.io.js')
+  script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous")
   script(src='/js/map.js')
   script(async defer src='https://maps.googleapis.com/maps/api/js?key=AIzaSyBPvBQVpE9mqJRIcSaUljVl5zEigpurjaw&libraries=places&callback=initMap')
-  //- script(type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBPvBQVpE9mqJRIcSaUljVl5zEigpurjaw&libraries=places&callback=initMap")
 
 
