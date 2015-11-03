@@ -50,7 +50,7 @@ var switchStream = function(swLng, swLat, neLng, neLat) {
 var seattle = ['-122.354','47.6','-122.32','47.63'];
 
 //Create stream
-var stream = twitter.stream('statuses/filter', { locations: seattle });
+// var stream = twitter.stream('statuses/filter', { locations: seattle });
 
 //Server-side socket.io to emit tweets
 io.on('connect', function(socket) {

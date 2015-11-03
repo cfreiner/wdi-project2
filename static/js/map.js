@@ -1,8 +1,7 @@
 var map = null;
+var geocoder = null;
 var mapReady = false;
 var socket = io();
-var tweets = [];
-var geocoder = new google.maps.Geocoder();
 
 socket.on('connect', function() {
   console.log('Socket.io connection successful');
@@ -16,7 +15,7 @@ socket.on('tweets', function(tweet) {
 //Get the relevent lat/lng bounds for the Twitter API
 //Take a goodle maps LatLngBounds object literal
 function getTwitterBounds(googleBounds) {
-  var sw = googleBoundsgetSouthWest();
+  var sw = googleBounds.getSouthWest();
   var ne = googleBounds.getNorthEast();
   return {
     coords: [
@@ -29,6 +28,10 @@ function getTwitterBounds(googleBounds) {
 }
 
 function initMap() {
+
+
+
+  geocoder = new google.maps.Geocoder();
   if(navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(position) {
       map = new google.maps.Map(document.getElementById('map'), {
@@ -41,33 +44,36 @@ function initMap() {
       google.maps.event.addListenerOnce(map, 'idle', function(){
         mapReady = true;
         var bounds = getTwitterBounds(map.getBounds());
-        // $.ajax({
-        //   url: window.location + 'stream',
-        //   method: 'GET',
-        //   data: bounds
-        // }).fail(function() {
-        //   console.log('ajax failed');
-        // });
         socket.emit('location', bounds);
+      });
+
+      //Map search bar and listener
+      var input = document.getElementById('location');
+      var autocomplete = new google.maps.places.Autocomplete(input);
+      autocomplete.bindTo('bounds', map);
+
+      map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+      autocomplete.addListener('place_changed', function() {
+        var place = autocomplete.getPlace();
+        if (!place.geometry) {
+          return;
+        }
+        if (place.geometry.viewport) {
+          map.fitBounds(place.geometry.viewport);
+        } else {
+          map.setCenter(place.geometry.location);
+          map.setZoom(17);
+        }
       });
 
     });
   } else {
     console.log('geolocation not enabled');
     map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: 47.6, lng: -122.354},
-    zoom: 14
+      center: {lat: 47.6, lng: -122.354},
+      zoom: 14
   });
-  }
-}
-
-//Add a tweet to the array
-function addTweet(tweet) {
-  if(tweets.length < 10) {
-    tweets.push(tweet);
-  } else {
-    tweets.shift();
-    tweets.push(tweet);
   }
 }
 
@@ -96,11 +102,10 @@ function panToLocation(location) {
   });
 }
 
-var newYork = {coords: ['-74','40','-73','41']};
-
 $(function() {
   $('.test').click(function(e) {
     e.preventDefault();
+    var newYork = {coords: ['-74','40','-73','41']};
     socket.emit('location', newYork);
   });
   $('#btn-location').click(function(e) {
