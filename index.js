@@ -30,21 +30,8 @@ app.get('/stream', function(req, res) {
     req.query.neLng,
     req.query.neLat
   );
-  // switchStream(
-  //   req.query.swLng,
-  //   req.query.swLat,
-  //   req.query.neLng,
-  //   req.query.neLat
-  // );
   res.end();
 });
-
-var switchStream = function(swLng, swLat, neLng, neLat) {
-  console.log('Switching stream');
-  var location = [swLng, swLat, neLng, neLat];
-  // stream.stop();
-  stream = twitter.stream('statuses/filter', {locations: location});
-};
 
 //location bounds: SW first, NE second, [lng, lat] format
 var seattle = ['-122.354','47.6','-122.32','47.63'];

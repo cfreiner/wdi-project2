@@ -28,10 +28,7 @@ function getTwitterBounds(googleBounds) {
 }
 
 function initMap() {
-
-
-
-  geocoder = new google.maps.Geocoder();
+  // geocoder = new google.maps.Geocoder();
   if(navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(position) {
       map = new google.maps.Map(document.getElementById('map'), {
@@ -65,6 +62,7 @@ function initMap() {
           map.setCenter(place.geometry.location);
           map.setZoom(17);
         }
+        socket.emit('location', getTwitterBounds(map.getBounds()));
       });
 
     });
@@ -79,15 +77,20 @@ function initMap() {
 
 function createInfoWindowFromTweet(tweet) {
   if(mapReady && tweet.coordinates) {
-    console.log('creating info window');
-    var infoWindow = new google.maps.InfoWindow({
-      content: tweet.text,
-      position: {
-        lat: tweet.coordinates.coordinates[1],
-        lng: tweet.coordinates.coordinates[0]
-      }
-    });
-    infoWindow.open(map);
+    var lat = tweet.coordinates.coordinates[1];
+    var lng = tweet.coordinates.coordinates[0];
+    var googLatLng = new google.maps.LatLng(parseFloat(lat), parseFloat(lng));
+    if(map.getBounds().contains(googLatLng)) {
+      console.log('creating info window');
+      var infoWindow = new google.maps.InfoWindow({
+        content: tweet.text,
+        position: {
+          lat: lat,
+          lng: lng
+        }
+      });
+      infoWindow.open(map);
+    }
   }
 }
 
