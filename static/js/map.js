@@ -29,7 +29,6 @@ function getTwitterBounds(googleBounds) {
 }
 
 function initMap() {
-  // geocoder = new google.maps.Geocoder();
   if(navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(position) {
       map = new google.maps.Map(document.getElementById('map'), {

@@ -25,6 +25,7 @@ app.route('/')
 
 //Server-side socket.io to emit tweets
 io.on('connect', function(socket) {
+  console.log('User connected');
   var stream = null;
   socket.on('location', function(newLocation) {
     if(stream) {
@@ -37,8 +38,9 @@ io.on('connect', function(socket) {
     });
   });
   socket.on('disconnect', function() {
+    console.log('User disconnected');
     stream.stop();
-  })
+  });
 });
 
 server.listen(port, function() {
