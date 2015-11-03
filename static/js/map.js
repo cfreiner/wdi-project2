@@ -1,7 +1,8 @@
 var map = null;
+var geocoder = null;
 var mapReady = false;
 var socket = io();
-var tweets = [];
+var infoWindows = [];
 
 socket.on('connect', function() {
   console.log('Socket.io connection successful');
@@ -9,19 +10,21 @@ socket.on('connect', function() {
 
 socket.on('tweets', function(tweet) {
   createInfoWindowFromTweet(tweet);
-  console.log(tweet.place);
+  console.log(tweet.place.place_type, tweet.place.full_name);
 });
 
 //Get the relevent lat/lng bounds for the Twitter API
-function getTwitterBounds(map) {
-  var bounds = map.getBounds();
-  var sw = bounds.getSouthWest();
-  var ne = bounds.getNorthEast();
+//Take a goodle maps LatLngBounds object literal
+function getTwitterBounds(googleBounds) {
+  var sw = googleBounds.getSouthWest();
+  var ne = googleBounds.getNorthEast();
   return {
-    swLat: sw.lat(),
-    swLng: sw.lng(),
-    neLat: ne.lat(),
-    neLng: ne.lng()
+    coords: [
+      sw.lng().toString(),
+      sw.lat().toString(),
+      ne.lng().toString(),
+      ne.lat().toString()
+    ]
   };
 }
 
@@ -37,75 +40,90 @@ function initMap() {
       });
       google.maps.event.addListenerOnce(map, 'idle', function(){
         mapReady = true;
-        var bounds = getTwitterBounds(map);
-        $.ajax({
-          url: window.location + 'stream',
-          method: 'GET',
-          data: bounds
-        }).fail(function() {
-          console.log('ajax failed');
-        });
+        var bounds = getTwitterBounds(map.getBounds());
+        socket.emit('location', bounds);
+      });
+
+      //Map search bar and listener
+      var input = document.getElementById('location');
+      var autocomplete = new google.maps.places.Autocomplete(input);
+      autocomplete.bindTo('bounds', map);
+
+      map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+      autocomplete.addListener('place_changed', function() {
+        var place = autocomplete.getPlace();
+        if (!place.geometry) {
+          return;
+        }
+        if (place.geometry.viewport) {
+          map.fitBounds(place.geometry.viewport);
+        } else {
+          map.setCenter(place.geometry.location);
+          map.setZoom(17);
+        }
+        socket.emit('location', getTwitterBounds(map.getBounds()));
       });
 
     });
   } else {
     console.log('geolocation not enabled');
     map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: 47.6, lng: -122.354},
-    zoom: 14
+      center: {lat: 47.6, lng: -122.354},
+      zoom: 14
   });
-  }
-  // $.ajax({
-  //   url: window.location + 'stream/50/100',
-  //   method: 'GET'
-  // }).done(function() {
-  //   console.log('ajax done');
-  // }).fail(function() {
-  //   console.log('ajax fail');
-  // });
-}
-
-//Add a tweet to the array
-function addTweet(tweet) {
-  if(tweets.length < 10) {
-    tweets.push(tweet);
-  } else {
-    tweets.shift();
-    tweets.push(tweet);
   }
 }
 
 function createInfoWindowFromTweet(tweet) {
   if(mapReady && tweet.coordinates) {
-    console.log('creating info window');
-    var infoWindow = new google.maps.InfoWindow({
-      content: tweet.text,
-      position: {
-        lat: tweet.coordinates.coordinates[1],
-        lng: tweet.coordinates.coordinates[0]
-      }
-    });
-    infoWindow.open(map);
+    var lat = tweet.coordinates.coordinates[1];
+    var lng = tweet.coordinates.coordinates[0];
+    var googLatLng = new google.maps.LatLng(parseFloat(lat), parseFloat(lng));
+    if(map.getBounds().contains(googLatLng)) {
+      console.log('creating info window');
+      var infoWindow = new google.maps.InfoWindow({
+        content: tweet.text,
+        position: {
+          lat: lat,
+          lng: lng
+        }
+      });
+      addInfoWindow(infoWindow);
+      // infoWindow.open(map);
+    }
   }
 }
 
-var infoWindow;
+function addInfoWindow(infoWindow) {
+  if(infoWindows.length > 5) {
+    infoWindows.shift().close();
+  }
+  infoWindow.open(map);
+  infoWindows.push(infoWindow);
+}
 
-setTimeout(function() {
-  infoWindow = new google.maps.InfoWindow({
-    content: 'This info window is a test.',
-    position: {
-      lat: 47.768248,
-      lng: -122.323113
+//Pan the map to a new location
+function panToLocation(location) {
+  geocoder.geocode( { 'address': location}, function(results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      map.panToBounds(results[0].geometry.bounds);
+    } else {
+      alert("Google geocoding error: " + status);
     }
   });
-  console.log('timeout');
-}, 5000);
-
+}
 
 $(function() {
   $('.test').click(function(e) {
     e.preventDefault();
-    infoWindow.open(map);
+    var newYork = {coords: ['-74','40','-73','41']};
+    socket.emit('location', newYork);
+  });
+  $('#btn-location').click(function(e) {
+    e.preventDefault();
+    var location = $('#btn-location').val();
+    panToLocation(location);
+    socket.emit('location', getTwitterBounds(map.getBounds));
   });
 });

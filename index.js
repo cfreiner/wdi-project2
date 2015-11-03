@@ -23,45 +23,23 @@ app.route('/')
     res.render('index');
   });
 
-app.get('/stream', function(req, res) {
-  console.log(
-    typeof req.query.swLng,
-    req.query.swLat,
-    req.query.neLng,
-    req.query.neLat
-  );
-  // switchStream(
-  //   req.query.swLng,
-  //   req.query.swLat,
-  //   req.query.neLng,
-  //   req.query.neLat
-  // );
-  res.end();
-});
-
-var switchStream = function(swLng, swLat, neLng, neLat) {
-  console.log('Switching stream');
-  var location = [swLng, swLat, neLng, neLat];
-  // stream.stop();
-  stream = twitter.stream('statuses/filter', {locations: location});
-};
-
-//location bounds: SW first, NE second
-var seattle = ['-122.354','47.6','-122.32','47.63'];
-
-//Create stream
-var stream = twitter.stream('statuses/filter', { locations: seattle });
-
 //Server-side socket.io to emit tweets
 io.on('connect', function(socket) {
-  // create client specific stream
-  // on stream tweet, send to socket
-
-  // listen for data from client
-  // change stream based on what client sends
-  stream.on('tweet', function(tweet) {
-    console.log('Emitting tweet');
-    io.emit('tweets', tweet);
+  console.log('User connected');
+  var stream = null;
+  socket.on('location', function(newLocation) {
+    if(stream) {
+      stream.stop();
+    }
+    stream = twitter.stream('statuses/filter', { locations: newLocation.coords });
+    stream.on('tweet', function(tweet) {
+      console.log('Emitting tweet');
+      socket.emit('tweets', tweet);
+    });
+  });
+  socket.on('disconnect', function() {
+    console.log('User disconnected');
+    stream.stop();
   });
 });
 
