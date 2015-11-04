@@ -60,10 +60,10 @@ router.post('/signup', function(req, res) {
       res.redirect('/');
     } else {
       db.user.findOrCreate({
-        where: {email: req.body.signup_email},
+        where: {username: req.body.signup_username},
         defaults: {
           password: req.body.signup_password,
-          username: req.body.signup_username
+          email: req.body.signup_email
         }
       }).spread(function(user, created) {
         if (created) {
@@ -73,7 +73,7 @@ router.post('/signup', function(req, res) {
             res.redirect('/');
           });
         } else {
-          req.flash('danger', 'A user with that email already exists!');
+          req.flash('danger', 'A user with that name already exists!');
           res.redirect('/auth/signup');
         }
       }).catch(function(err) {
