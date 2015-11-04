@@ -115,11 +115,6 @@ function panToLocation(location) {
 }
 
 $(function() {
-  $('.test').click(function(e) {
-    e.preventDefault();
-    var newYork = {coords: ['-74','40','-73','41']};
-    socket.emit('location', newYork);
-  });
   $('#btn-location').click(function(e) {
     e.preventDefault();
     var location = $('#btn-location').val();

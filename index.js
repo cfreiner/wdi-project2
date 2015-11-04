@@ -1,8 +1,36 @@
-//Server variables
 var express = require('express');
+var bodyParser = require('body-parser');
+var session = require('express-session');
+var flash = require('connect-flash');
+var db = require('./models');
+var passport = require('passport');
 var app = express();
 var server = require('http').createServer(app);
-var port = process.env.PORT || 3000;
+var strategies = require('./strategies/strategies');
+
+
+app.set('view engine', 'jade');
+
+app.use(express.static(__dirname + '/static'));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(flash());
+app.use(session({
+  secret: 'q3oR9uSdx29g73pSnr894jfwDEshd8',
+  resave: false,
+  saveUninitialized: true
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+passport.serializeUser(strategies.serializeUser);
+passport.deserializeUser(strategies.deserializeUser);
+passport.use(strategies.localStrategy);
+
+app.use(function(req,res,next){
+  res.locals.currentUser = req.user;
+  res.locals.alerts = req.flash();
+  next();
+});
 
 //Twitter streaming variables
 var io = require('socket.io')(server);
@@ -14,14 +42,26 @@ var twitter = new Twit({
   access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
 });
 
-//Routing and views
-app.use(express.static(__dirname + '/static'));
-app.set('view engine', 'jade');
+//Routing
+app.get('/', function(req, res) {
+  console.log("******************");
+  console.log(req.user);
+  console.log("******************");
+  res.render('index');
+});
 
-app.route('/')
-  .get(function(req, res) {
-    res.render('index');
-  });
+app.get('/test', function(req, res) {
+  if (req.user) {
+    req.flash('success', 'You are logged in via passport');
+    res.redirect('/');
+  } else {
+    req.flash('danger','Something messed up');
+    res.redirect('/');
+  }
+});
+
+app.use('/auth', require('./controllers/auth'));
+
 
 //Server-side socket.io to emit tweets
 io.on('connect', function(socket) {
@@ -43,6 +83,7 @@ io.on('connect', function(socket) {
   });
 });
 
+var port = process.env.PORT || 3000;
 server.listen(port, function() {
   console.log('Listening on port ' + port);
 });
