@@ -12,14 +12,16 @@ module.exports = {
     }).catch(done);
   },
   localStrategy: new LocalStrategy({
-      usernameField: 'email'
+      usernameField: 'username'
     },
-    function(email, password, done) {
-      db.user.find({where: {email: email}}).then(function(user) {
-        if (user) {
+    function(username, password, done) {
+      db.user.find({where: {username: username}}).then(function(user) {
+        if(user) {
           user.checkPassword(password, function(err, result) {
-            if (err) return done(err);
-            if (result) {
+            if(err) {
+              return done(err);
+            }
+            if(result) {
               done(null, user.get());
             } else {
               done(null, false, {message: 'Invalid password'});
@@ -36,7 +38,6 @@ module.exports = {
     callbackURL: process.env.BASE_URL + '/auth/twitter/callback'
   },
   function(token, tokenSecret, profile, done) {
-    //do things
     db.provider.find({
       where: {
         pid: profile.id,
@@ -64,7 +65,7 @@ module.exports = {
               done(null, user.get());
             });
           } else {
-            done(null, false, {message: 'You already signed up with this email address. Please login'});
+            done(null, false, {message: 'This username already exists. Please login'});
           }
         });
       }
