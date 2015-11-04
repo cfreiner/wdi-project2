@@ -90,7 +90,6 @@ function createInfoWindowFromTweet(tweet) {
         }
       });
       addInfoWindow(infoWindow);
-      // infoWindow.open(map);
     }
   }
 }
