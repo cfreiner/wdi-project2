@@ -1,0 +1,25 @@
+.modal.fade.signup(tabindex='-1', role='dialog', aria-labelledby='signup')
+  .modal-dialog.modal-sm
+    .modal-content
+      .modal-header
+        button.close(type='button', data-dismiss='modal', aria-label='Close')
+          span(aria-hidden='true') ×
+        h4#gridSystemModalLabel.modal-title Sign Up
+      .modal-body
+        form(id='signup' method='POST' action='/auth/signup')
+          .form-group
+            label(for='signup_username') Username
+            input.form-control(type='text' id='signup_username' name='signup_username')
+          .form-group
+            label(for='signup_email') Email
+            input.form-control(type='email' id='signup_email' name='signup_email')
+          .form-group
+            label(for='signup_password') Password
+            input.form-control(type='text' id='signup_password' name='signup_password')
+          .form-group
+            label(for='signup_password2') Re-enter password
+            input.form-control(type='text' id='signup_password2' name='signup_password2')
+          button.btn.btn-primary Sign Up
+      .modal-footer
+        h4.pull-left OR &nbsp;
+        a.btn.btn-primary.pull-left(href='/auth/twitter') Sign in via Twitter
