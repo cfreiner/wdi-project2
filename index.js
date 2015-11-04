@@ -8,7 +8,6 @@ var app = express();
 var server = require('http').createServer(app);
 var strategies = require('./strategies/strategies');
 
-
 app.set('view engine', 'jade');
 
 app.use(express.static(__dirname + '/static'));
@@ -25,6 +24,7 @@ app.use(passport.session());
 passport.serializeUser(strategies.serializeUser);
 passport.deserializeUser(strategies.deserializeUser);
 passport.use(strategies.localStrategy);
+passport.use(strategies.twitterStrategy);
 
 app.use(function(req,res,next){
   res.locals.currentUser = req.user;

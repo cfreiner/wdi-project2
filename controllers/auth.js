@@ -27,6 +27,12 @@ router.get('/logout', function(req, res) {
   res.redirect('/');
 });
 
+router.get('/twitter', passport.authenticate('twitter'));
+
+router.get('/twitter/callback',
+  passport.authenticate('twitter', { successRedirect: '/',
+                                     failureRedirect: '/' }));
+
 router.post('/signup', function(req, res) {
   if (req.body.signup_password != req.body.signup_password2) {
       req.flash('danger', 'Passwords must match! Try again!');
