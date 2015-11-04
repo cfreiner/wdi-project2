@@ -50,10 +50,10 @@ module.exports = {
           done(null, provider.user.get());
         });
       } else {
-        var email = profile.emails[0].value;
+        var username = profile.username;
         db.user.findOrCreate({
-          where: {email: email},
-          defaults: {name: profile.displayName}
+          where: {username: username},
+          defaults: {email: null}
         }).spread(function(user, created) {
           if(created) {
             user.createProvider({
