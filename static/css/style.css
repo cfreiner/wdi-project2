@@ -34,3 +34,31 @@ h1 {
   box-sizing: border-box;
   outline: none;
 }
+
+.tweet {
+  width: 350px;
+  box-sizing: border-box;
+}
+
+.user-image {
+  float: left;
+  padding-right: 10px;
+  padding-bottom: 5px;
+}
+
+.username {
+  font-weight: bold;
+}
+
+.screenname {
+  color: #66757f;
+}
+
+.twitter-logo {
+  float: right;
+  width: 30px;
+}
+
+.tweet-text {
+  clear: both;
+}
