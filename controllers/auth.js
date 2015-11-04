@@ -1,59 +1,59 @@
 var express = require('express');
 var router = express.Router();
 var db = require('../models');
+var passport = require('passport');
 
 router.post('/login', function(req, res) {
-  db.user.authenticate(
-    req.body.login_email,
-    req.body.login_password,
-    function(err, user) {
-      if(err) {
-        res.send(err);
-      } else if(user) {
-        req.session.user = user.id;
-        req.flash('success', 'You are logged in as ' + user.username);
+  passport.authenticate('local', function(err, user, info) {
+    if (user) {
+      req.login(user, function(err) {
+        if (err) throw err;
+        console.log("after login******************");
+        console.log(req.user);
+        console.log("******************");
+        req.flash('success', 'Login successful!');
         res.redirect('/');
-      } else {
-        req.flash('danger', 'Invalid username or password');
-        res.redirect('/auth/login');
-      }
+      });
+    } else {
+      req.flash('danger', 'Login Error');
+      res.redirect('/');
     }
-  );
+  })(req, res);
 });
 
 router.get('/logout', function(req, res) {
-  req.flash('success', 'You have been logged out');
-  req.session.user = false;
+  req.logout();
+  req.flash('success', 'Successfully logged out');
   res.redirect('/');
 });
 
 router.post('/signup', function(req, res) {
-  if(req.body.signup_password !== req.body.signup_password2) {
-    req.flash('error', 'Passwords must match! Please try again.');
-    res.redirect('/');
-  } else {
-    db.user.findOrCreate({
-      where: {
-        email: req.body.email
-      },
-      defaults: {
-        email: req.body.email,
-        password: req.body.password,
-        username: req.body.username
-      }
-    }).spread(function(user, created) {
-      if(created) {
-        req.flash('success', 'Registration successful!');
-        res.redirect('/');
-      } else {
-        req.flash('danger', 'An account with that email already exists!');
-        res.redirect('/');
-      }
-    }).catch(function(err) {
-      req.flash('error', 'Error signing up: ' + err.message);
+  if (req.body.signup_password != req.body.signup_password2) {
+      req.flash('danger', 'Passwords must match! Try again!');
       res.redirect('/');
-    });
-  }
+    } else {
+      db.user.findOrCreate({
+        where: {email: req.body.signup_email},
+        defaults: {
+          password: req.body.signup_password,
+          username: req.body.signup_username
+        }
+      }).spread(function(user, created) {
+        if (created) {
+          req.login(user, function(err) {
+            if (err) throw err;
+            req.flash('success', 'Sign up successful!');
+            res.redirect('/');
+          });
+        } else {
+          req.flash('danger', 'A user with that email already exists!');
+          res.redirect('/auth/signup');
+        }
+      }).catch(function(err) {
+        req.flash('danger','Signup error: ' + err);
+        res.redirect('/');
+      });
+    }
 });
 
 module.exports = router;

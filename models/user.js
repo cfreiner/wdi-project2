@@ -1,4 +1,5 @@
 'use strict';
+var bcrypt = require('bcrypt');
 module.exports = function(sequelize, DataTypes) {
   var user = sequelize.define('user', {
     username: DataTypes.STRING,
@@ -29,18 +30,23 @@ module.exports = function(sequelize, DataTypes) {
         });
       }
     },
+    instanceMethods: {
+      checkPassword: function(password, callback){
+        if (password && this.password) {
+          bcrypt.compare(password, this.password, callback);
+        } else {
+          callback(null, false);
+        }
+      }
+    },
     hooks: {
       beforeCreate: function(user, options, callback) {
-        if(user.password) {
-          bcrypt.hash(user.password, 10, function(err, hash) {
-            if(err) {
-              return callback(err);
-            } else {
-              user.password = hash;
-              callback(null, user);
-            }
-          });
-        }
+        if (!user.password) return callback(null, user);
+        bcrypt.hash(user.password, 10, function(err, hash) {
+          if (err) return callback(err);
+          user.password = hash;
+          callback(null, user);
+        });
       }
     }
   });
