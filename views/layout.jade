@@ -6,9 +6,19 @@ html
     link(href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css')
     link(rel="stylesheet" type="text/css" href="/css/style.css")
   body
-    block flash
-      if alerts
-        each value, key in alerts
-          div(class='alert alert-#{key}') #{value}
-    block content
-      h1 Jade templating error
+    .container
+      block flash
+        if alerts
+          each value, key in alerts
+            div(class='alert alert-#{key}') #{value}
+      block header
+        .row
+          h1 Title
+          unless currentUser
+            button.btn.btn-primary.pull-right(type='button', data-toggle='modal', data-target='.signup') Sign Up
+            button.btn.btn-primary.pull-right(type='button', data-toggle='modal', data-target='.login') Log In
+          if currentUser
+            a.btn.btn-primary.pull-right(href='/auth/logout') Log Out
+          include ./includes/login.jade
+          include ./includes/signup.jade
+      block content
