@@ -2,6 +2,27 @@ var express = require('express');
 var router = express.Router();
 var db = require('../models');
 var passport = require('passport');
+var bcrypt = require('bcrypt');
+
+router.post('/update', function(req, res) {
+  if(req.user && !req.user.password && !req.user.email) {
+    var password = null;
+    bcrypt.hash(req.body.password, 10, function(err, hash) {
+      if(err) {throw err;}
+      password = hash;
+    });
+    db.user.findById(req.user.id).then(function(user) {
+      user.update({
+        email: req.body.email,
+        password: password
+      }).then(function(user) {
+        req.flash('success', 'Successfully updated info for ' + user.username);
+      });
+    });
+  } else {
+    req.flash('danger', 'You must be logged in to update account info');
+  }
+});
 
 router.post('/login', function(req, res) {
   passport.authenticate('local', function(err, user, info) {
