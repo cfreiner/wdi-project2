@@ -80,10 +80,11 @@ function createInfoWindowFromTweet(tweet) {
     var lat = tweet.coordinates.coordinates[1];
     var lng = tweet.coordinates.coordinates[0];
     var googLatLng = new google.maps.LatLng(parseFloat(lat), parseFloat(lng));
+    var el = createDomTweet(tweet);
     if(map.getBounds().contains(googLatLng)) {
       console.log('creating info window');
       var infoWindow = new google.maps.InfoWindow({
-        content: tweet.text,
+        content: el,
         position: {
           lat: lat,
           lng: lng
