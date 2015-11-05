@@ -4,12 +4,21 @@ var db = require('../models');
 
 router.post('/', function(req, res) {
   if(req.user) {
+    console.log('REQ.body.placeId: ', req.body.placeId);
     db.user.findById(req.user.id).then(function(user) {
-      user.createHistory({
-        placeId: req.body.data.placeId
-      }).then(function(history) {
-        res.sendStatus(200);
-        console.log('Created history for place ' + history.placeId);
+      db.history.findOrCreate({
+        where: {
+          userId: user.id,
+          placeId: req.body.placeId
+        }
+      }).spread(function(history, created) {
+        if(created) {
+          console.log('created history entry');
+          res.sendStatus(200);
+        } else {
+          console.log('not creating duplicate history');
+          res.sendStatus(200);
+        }
       });
     });
   } else {
@@ -20,7 +29,7 @@ router.post('/', function(req, res) {
 router.get('/', function(req, res) {
   if(req.user) {
     db.user.findById(req.user.id).then(function(user) {
-      user.getHistory().then(function(histories) {
+      user.getHistories().then(function(histories) {
         res.render('history', {histories: histories});
       });
     });
@@ -29,3 +38,5 @@ router.get('/', function(req, res) {
     res.redirect('/');
   }
 });
+
+module.exports = router;
