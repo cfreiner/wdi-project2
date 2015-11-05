@@ -62,3 +62,7 @@ h1 {
 .tweet-text {
   clear: both;
 }
+
+.btn {
+  margin: 10px;
+}
