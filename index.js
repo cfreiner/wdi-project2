@@ -61,7 +61,7 @@ app.get('/test', function(req, res) {
 });
 
 app.use('/auth', require('./controllers/auth'));
-
+app.use('/history', require('./controllers/history'));
 
 //Server-side socket.io to emit tweets
 io.on('connect', function(socket) {

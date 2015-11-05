@@ -13,11 +13,12 @@ html
             div(class='alert alert-#{key}') #{value}
       block header
         .row
-          h1 Title
+          h1 Crow's Nest
           unless currentUser
             button.btn.btn-primary.pull-right(type='button', data-toggle='modal', data-target='.signup') Sign Up
             button.btn.btn-primary.pull-right(type='button', data-toggle='modal', data-target='.login') Log In
           if currentUser
+            a.btn.btn-primary.pull-right(href='/history') History
             a.btn.btn-primary.pull-right(href='/auth/logout') Log Out
           include ./includes/login.jade
           include ./includes/signup.jade
