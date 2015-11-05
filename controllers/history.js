@@ -8,6 +8,7 @@ router.post('/', function(req, res) {
       user.createHistory({
         placeId: req.body.data.placeId
       }).then(function(history) {
+        res.sendStatus(200);
         console.log('Created history for place ' + history.placeId);
       });
     });

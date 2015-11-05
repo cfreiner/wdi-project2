@@ -62,6 +62,7 @@ function initMap() {
           map.setCenter(place.geometry.location);
           map.setZoom(17);
         }
+        addHistory(place.placeId);
         socket.emit('location', getTwitterBounds(map.getBounds()));
       });
 
@@ -101,6 +102,18 @@ function addInfoWindow(infoWindow) {
   }
   infoWindow.open(map);
   infoWindows.push(infoWindow);
+}
+
+function addHistory(placeId) {
+  $.post('/history', {
+    placeId: placeId
+  }, function(data, status) {
+    if(status === 200) {
+      console.log('History added successfully');
+    } else {
+      console.log('History add failed: ' + status);
+    }
+  });
 }
 
 //Pan the map to a new location
