@@ -36,7 +36,7 @@ function initMap() {
           lat: position.coords.latitude,
           lng: position.coords.longitude
         },
-        zoom: 15
+        zoom: 12
       });
       google.maps.event.addListenerOnce(map, 'idle', function(){
         mapReady = true;
@@ -96,7 +96,7 @@ function createInfoWindowFromTweet(tweet) {
 }
 
 function addInfoWindow(infoWindow) {
-  if(infoWindows.length > 5) {
+  if(infoWindows.length > 4) {
     infoWindows.shift().close();
   }
   infoWindow.open(map);
