@@ -51,7 +51,7 @@ app.get('/', function(req, res) {
 });
 
 app.get('/test', function(req, res) {
-  if (req.user) {
+  if(req.user) {
     req.flash('success', 'You are logged in via passport');
     res.redirect('/');
   } else {
@@ -59,6 +59,60 @@ app.get('/test', function(req, res) {
     res.redirect('/');
   }
 });
+
+app.get('/favorites/show', function(req, res) {
+  if(req.user) {
+    db.user.findById(req.user.id).then(function(user) {
+      user.getFavorites().then(function(favs) {
+        res.render('favorites', {favs: favs});
+      });
+    });
+  } else {
+    req.flash('danger', 'Must be logged in to view this page');
+    res.redirect('/');
+  }
+});
+
+app.get('/favorites/:id', function(req, res) {
+  if(req.user) {
+    db.favorite.findOrCreate({
+      where: {
+        userId: req.user.id,
+        tweetId: req.params.id
+      }
+    }).spread(function(fav, created) {
+      if(created) {
+        req.flash('success', 'favorite created');
+        res.end();
+      } else {
+        req.flash('danger', 'already favorited');
+        res.end();
+      }
+    });
+  } else {
+    req.flash('danger', 'Must be logged in to add a favorite');
+    res.end();
+  }
+});
+
+// app.get('/favorites/:id', function(req, res) {
+//   if(req.user) {
+//     db.user.findById(req.user.id).then(function(user) {
+//       db.favorite.findOrCreate({
+//         where: {
+//           userId: user.id,
+//           tweetId: req.params.id
+//         }
+//       }).then(function() {
+//         req.flash('success', 'favorite added');
+//         res.end();
+//       });
+//     }
+//   } else {
+//     req.flash('danger', 'Must be logged in to favorite');
+//     res.end();
+//   }
+// });
 
 app.use('/auth', require('./controllers/auth'));
 

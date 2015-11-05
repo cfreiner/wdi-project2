@@ -1,0 +1,10 @@
+extends layout.jade
+
+block content
+  script(src='/js/twitter.js')
+  script(src='/js/favorites.js')
+  div(id='tweets')
+    for fav in favs
+      div(id='#{fav.tweetId}')
+
+

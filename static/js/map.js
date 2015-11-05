@@ -114,6 +114,14 @@ function panToLocation(location) {
   });
 }
 
+function addFav(tweetId) {
+  $.ajax({
+    url: window.location + 'favorites/' + tweetId
+  }).done(function() {
+    console.log('fav ajax done');
+  });
+}
+
 $(function() {
   $('#btn-location').click(function(e) {
     e.preventDefault();

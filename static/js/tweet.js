@@ -7,8 +7,13 @@ var createDomTweet = function(tweet) {
   userImage.setAttribute('src', tweet.user.profile_image_url);
   userImage.classList.add('user-image');
   var logo = document.createElement('img');
+
+  var favLink = document.createElement('a');
+  favLink.setAttribute('onclick', 'addFav(' + tweet.id_str + ');');
   logo.setAttribute('src', '/images/TwitterLogo.png');
   logo.classList.add('twitter-logo');
+  favLink.appendChild(logo);
+
   var username = document.createElement('span');
   username.classList.add('username');
   username.textContent = tweet.user.name;
@@ -20,7 +25,7 @@ var createDomTweet = function(tweet) {
   text.textContent = tweet.text;
   body.appendChild(text);
   header.appendChild(userImage);
-  header.appendChild(logo);
+  header.appendChild(favLink);
   header.appendChild(username);
   header.appendChild(document.createElement('br'));
   header.appendChild(screenname);
