@@ -12,15 +12,16 @@ html
           each value, key in alerts
             div(class='alert alert-#{key}') #{value}
       block header
-        .row
-          img.logo-main(src='/images/crowsnest.png')
-          h1 Crow's Nest
+        .row.header
+          a.plain(href='/')
+            img.logo-main(src='/images/crowsnest.png')
+            h1.plain Crow's Nest
           unless currentUser
             button.btn.btn-primary.pull-right(type='button', data-toggle='modal', data-target='.signup') Sign Up
             button.btn.btn-primary.pull-right(type='button', data-toggle='modal', data-target='.login') Log In
           if currentUser
-            a.btn.btn-primary.pull-right(href='/history') History
             a.btn.btn-primary.pull-right(href='/auth/logout') Log Out
+            a.btn.btn-primary.pull-right(href='/history') History
           include ./includes/login.jade
           include ./includes/signup.jade
       block content
