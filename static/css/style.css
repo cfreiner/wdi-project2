@@ -8,7 +8,7 @@ html, body {
 }
 
 h1 {
-  margin: 0;
+  display: inline;
 }
 
 .main-row {
@@ -65,4 +65,8 @@ h1 {
 
 .btn {
   margin: 10px;
+}
+
+.logo-main {
+  height: 50px;
 }
