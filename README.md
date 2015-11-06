@@ -20,6 +20,12 @@ Twitter's OAuth callback doesn't come with an email address, so users who log in
 
 Perhaps the biggest downfall of the app is the limited number of tweets that are tagged with exact locations. This is a result of Twitter moving towards a Four Square-based place-centric check-in system and away from users tagging their exact geocoordinates.  When use of this place-tagging system becomes more prevalent, the app will probably become more useful and more fun.
 
+Tweets come with entities like hashtags and links, so future features could include ways to visualize hashtags.  This would be a good way to utilize all the tweets that are included in the stream that aren't tagged with exact coordinates.
+
 ##Link to design docs
 https://www.dropbox.com/sh/wkc78l0fi8vh02c/AAA92nRJtDOd75bMlAm55Looa?dl=0
 
+##User Stories
+1. I'm a bored student sitting in class. I want a distraction, so I go to Crow's Nest and watch local tweets.  Maybe I also check some other locations, and tweet some of my own tweets and watch them pop up on the screen.
+
+2. I'm an avid twitter user. I get into tweet conversations and arguments with people all the time. If I'm conversing with someone local, I want to be able to see their exact location on the map.
