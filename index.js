@@ -44,22 +44,8 @@ var twitter = new Twit({
 
 //Routing
 app.get('/', function(req, res) {
-  console.log("******************");
-  console.log(req.user);
-  console.log("******************");
   res.render('index');
 });
-
-app.get('/test', function(req, res) {
-  if (req.user) {
-    req.flash('success', 'You are logged in via passport');
-    res.redirect('/');
-  } else {
-    req.flash('danger','Something messed up');
-    res.redirect('/');
-  }
-});
-
 app.use('/auth', require('./controllers/auth'));
 app.use('/history', require('./controllers/history'));
 
