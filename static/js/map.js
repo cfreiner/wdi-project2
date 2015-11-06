@@ -76,10 +76,32 @@ function initMap() {
   }
 }
 
+
+"bounding_box":
+{
+  "coordinates":
+  [
+  [
+   [2.2241006,48.8155414],
+    [2.4699099,48.8155414],
+     [2.4699099,48.9021461],
+      [2.2241006,48.9021461]
+  ]
+  ],
+  "type":"Polygon"}
+
+
 function createInfoWindowFromTweet(tweet) {
-  if(mapReady && tweet.coordinates) {
-    var lat = tweet.coordinates.coordinates[1];
-    var lng = tweet.coordinates.coordinates[0];
+  if(mapReady) {
+    if(tweet.coordinates) {
+      var lat = tweet.coordinates.coordinates[1];
+      var lng = tweet.coordinates.coordinates[0];
+    } else if(tweet.place) {
+      if(tweet.place.place_type === 'poi' || tweet.place.place_type === 'neighborhood') {
+        var lat = tweet.place.coordinates[0][1];
+        var lng = tweet.place.coordinates[0][0];
+      }
+    }
     var googLatLng = new google.maps.LatLng(parseFloat(lat), parseFloat(lng));
     var el = createDomTweet(tweet);
     if(map.getBounds().contains(googLatLng)) {
