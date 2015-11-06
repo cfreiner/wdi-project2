@@ -2,9 +2,9 @@ var express = require('express');
 var router = express.Router();
 var db = require('../models');
 
+//Route to add a location to the user's history
 router.post('/', function(req, res) {
   if(req.user) {
-    console.log('REQ.body.placeId: ', req.body.placeId);
     db.user.findById(req.user.id).then(function(user) {
       db.history.findOrCreate({
         where: {
@@ -26,6 +26,7 @@ router.post('/', function(req, res) {
   }
 });
 
+//Show history route
 router.get('/', function(req, res) {
   if(req.user) {
     db.user.findById(req.user.id).then(function(user) {

@@ -4,6 +4,8 @@ var db = require('../models');
 var passport = require('passport');
 var bcrypt = require('bcrypt');
 
+//Currently unused route. Useful in the future to add passwords
+//and emails to Twitter logins that don't have those fields
 router.post('/update', function(req, res) {
   if(req.body.update_password !== req.body.update_password2) {
     req.flash('danger', 'Passwords must match');
@@ -29,14 +31,12 @@ router.post('/update', function(req, res) {
   }
 });
 
+//Login route
 router.post('/login', function(req, res) {
   passport.authenticate('local', function(err, user, info) {
     if (user) {
       req.login(user, function(err) {
         if (err) throw err;
-        console.log("after login******************");
-        console.log(req.user);
-        console.log("******************");
         req.flash('success', 'Login successful!');
         res.redirect('/');
       });
@@ -47,18 +47,19 @@ router.post('/login', function(req, res) {
   })(req, res);
 });
 
+//Logout route
 router.get('/logout', function(req, res) {
   req.logout();
   req.flash('success', 'Successfully logged out');
   res.redirect('/');
 });
 
+//Twitter OAuth route with callback route
 router.get('/twitter', passport.authenticate('twitter'));
-
 router.get('/twitter/callback',
   passport.authenticate('twitter', { successRedirect: '/',
                                      failureRedirect: '/' }));
-
+//Sign up/register route
 router.post('/signup', function(req, res) {
   if (req.body.signup_password != req.body.signup_password2) {
       req.flash('danger', 'Passwords must match! Try again!');

@@ -4,6 +4,7 @@ var mapReady = false;
 var socket = io();
 var infoWindows = [];
 
+//Client-side socket connection
 socket.on('connect', function() {
   console.log('Socket.io connection successful');
 });
@@ -28,6 +29,7 @@ function getTwitterBounds(googleBounds) {
   };
 }
 
+//Google maps initialization callback
 function initMap() {
   if(navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(position) {
@@ -44,7 +46,7 @@ function initMap() {
         socket.emit('location', bounds);
       });
 
-      //Map search bar and listener
+      //Google Places API search bar and listener
       var input = document.getElementById('location');
       var autocomplete = new google.maps.places.Autocomplete(input);
       autocomplete.bindTo('bounds', map);
@@ -76,21 +78,7 @@ function initMap() {
   }
 }
 
-
-"bounding_box":
-{
-  "coordinates":
-  [
-  [
-   [2.2241006,48.8155414],
-    [2.4699099,48.8155414],
-     [2.4699099,48.9021461],
-      [2.2241006,48.9021461]
-  ]
-  ],
-  "type":"Polygon"}
-
-
+//Create an info window from a tweet if it is within the bounds of the map
 function createInfoWindowFromTweet(tweet) {
   if(mapReady) {
     if(tweet.coordinates) {
@@ -118,6 +106,7 @@ function createInfoWindowFromTweet(tweet) {
   }
 }
 
+//Function to control the number of tweets displayed simulataneously
 function addInfoWindow(infoWindow) {
   if(infoWindows.length > 5) {
     infoWindows.shift().close();
@@ -126,8 +115,8 @@ function addInfoWindow(infoWindow) {
   infoWindows.push(infoWindow);
 }
 
+//Adds a location to the user's history after they search it
 function addHistory(placeId) {
-  console.log('PLACE ID: ',placeId);
   $.post('/history', {placeId: placeId}, function(data, status) {
     if(status === 200) {
       console.log('History added successfully');
@@ -136,23 +125,3 @@ function addHistory(placeId) {
     }
   });
 }
-
-//Pan the map to a new location
-function panToLocation(location) {
-  geocoder.geocode( { 'address': location}, function(results, status) {
-    if (status == google.maps.GeocoderStatus.OK) {
-      map.panToBounds(results[0].geometry.bounds);
-    } else {
-      alert("Google geocoding error: " + status);
-    }
-  });
-}
-
-$(function() {
-  $('#btn-location').click(function(e) {
-    e.preventDefault();
-    var location = $('#btn-location').val();
-    panToLocation(location);
-    socket.emit('location', getTwitterBounds(map.getBounds));
-  });
-});

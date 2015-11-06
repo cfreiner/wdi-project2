@@ -1,3 +1,5 @@
+//Create a DOM element that looks like a real tweet. This is used to make
+//Google's info windows look like tweets.
 var createDomTweet = function(tweet) {
   var parent = document.createElement('div');
   parent.classList.add('tweet');
