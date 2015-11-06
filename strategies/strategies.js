@@ -35,7 +35,7 @@ module.exports = {
   twitterStrategy: new TwitterStrategy({
     consumerKey: process.env.TWITTER_CONSUMER_KEY,
     consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-    callbackURL: process.env.BASE_URL + '/auth/twitter/callback'
+    callbackURL: process.env.BASE_URL + 'auth/twitter/callback'
   },
   function(token, tokenSecret, profile, done) {
     db.provider.find({
