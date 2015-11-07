@@ -48,6 +48,9 @@ app.get('/', function(req, res) {
 });
 app.use('/auth', require('./controllers/auth'));
 app.use('/history', require('./controllers/history'));
+app.get('/*', function(req, res) {
+  res.redirect('/');
+});
 
 //Server-side socket.io to emit tweets
 io.on('connect', function(socket) {
